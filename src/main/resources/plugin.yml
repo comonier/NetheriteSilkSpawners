@@ -1,0 +1,6 @@
+name: NetheriteSilkSpawners
+version: 1.0
+main: me.comonier.netheritesilkspawners.Main
+api-version: '1.21'
+author: comonier
+description: Permite coletar spawners com picareta de netherite e silk touch.
