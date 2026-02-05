@@ -1,6 +1,6 @@
 name: NetheriteSilkSpawners
 version: 1.0
 main: me.comonier.netheritesilkspawners.Main
-api-version: '1.21'
+api-version: '1.21' # Isso cobre todas as versões 1.21.x, incluindo a 1.21.11
 author: comonier
 description: Permite coletar spawners com picareta de netherite e silk touch.

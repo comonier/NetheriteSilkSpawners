@@ -1,0 +1,13 @@
+# Configurações do NetheriteSilkSpawners
+
+# Qual picareta é necessária? (Opções: NETHERITE_PICKAXE, DIAMOND_PICKAXE, etc)
+required-pickaxe: "NETHERITE_PICKAXE"
+
+# É necessário Silk Touch (Toque de Seda)?
+require-silk-touch: true
+
+# Proteção: Impedir que spawners dropem itens ou quebrem por explosões?
+prevent-explosion-drop: true
+
+# Mensagem ao coletar (deixe vazio "" para desativar)
+collect-message: "&aVocê coletou um spawner de %type%!"
