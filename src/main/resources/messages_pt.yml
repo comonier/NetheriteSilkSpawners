@@ -1,0 +1,22 @@
+prefix: "&8[&dNSS&8] "
+collect-success: "&aVocê coletou um spawner de &e%type%&a!"
+place-success: "&aVocê colocou um spawner de &e%type%&a!"
+change-success: "&aTipo do spawner alterado para &e%type%&a!"
+no-permission: "&cVocê não tem permissão para esta ação."
+no-permission-region: "&cVocê não pode mexer em spawners em terrenos protegidos."
+reload-success: "&aConfigurações e mensagens recarregadas com sucesso!"
+invalid-syntax: "&cUtilize: /nss reload"
+
+# Status Inteligente
+deny-header: "&e&lAção Bloqueada:"
+deny-tool: "&bFerramenta (%tool%): %status%"
+deny-perm: "&bPermissão (%type%): %status%"
+deny-silk: "&bEncantamento Silk: %status%"
+status-on: "&aOn"
+status-off: "&cOff"
+
+# Anúncios Globais
+announce-collect: "&d%player% &7coletou um spawner de &e%type%&7!"
+announce-place: "&d%player% &7colocou um spawner de &e%type%&7!"
+announce-change: "&d%player% &7alterou um spawner para &e%type%&7!"
+announce-explosion: "&cUm spawner de &e%type% &cfoi destruído por uma explosão!"

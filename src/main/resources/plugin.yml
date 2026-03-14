@@ -1,0 +1,44 @@
+name: NetheriteSilkSpawners
+version: 1.1.1
+main: com.comonier.netheritesilkspawners.Main
+api-version: '1.21'
+author: comonier
+description: Advanced spawner management (1.21.1) with protection bypass.
+softdepend: [WorldGuard, GriefPrevention]
+commands:
+  nss:
+    description: Main command for NetheriteSilkSpawners
+    aliases: [netheritesilkspawners]
+permissions:
+  nss.admin:
+    description: Allows reloading and bypassing all protection checks
+    default: op
+  
+  # --- Collection ---
+  nss.collect.all:
+    description: Allows collecting any type of spawner
+    default: op
+  
+  # --- Placement ---
+  nss.place.all:
+    description: Allows placing any type of spawner
+    default: op
+
+  # --- Change (Eggs) ---
+  nss.change.all:
+    description: Allows changing spawner to any mob type using eggs
+    default: op
+
+  # --- Tool Permissions ---
+  nss.tool.netherite_pickaxe:
+    description: Allows using a Netherite Pickaxe
+    default: true
+  nss.tool.diamond_pickaxe:
+    description: Allows using a Diamond Pickaxe
+    default: op
+  nss.tool.copper_pickaxe:
+    description: Allows using a Copper Pickaxe (if available)
+    default: op
+  nss.tool.iron_pickaxe:
+    description: Allows using an Iron Pickaxe
+    default: op

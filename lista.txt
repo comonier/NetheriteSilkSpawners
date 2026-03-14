@@ -1,0 +1,39 @@
+Listagem de caminhos de pasta
+O n£mero de s‚rie do volume ‚ 44E2-1797
+C:.
+|   .gitignore
+|   LICENSE
+|   lista.txt
+|   pom.xml
+|   README.md
+|   
++---.vscode
+|       settings.json
+|       
++---src
+|   \---main
+|       +---java
+|       |   \---com
+|       |       \---comonier
+|       |           \---netheritesilkspawners
+|       |                   Main.java
+|       |                   
+|       \---resources
+|               config.yml
+|               plugin.yml
+|               
+\---target
+    +---classes
+    |   |   config.yml
+    |   |   plugin.yml
+    |   |   
+    |   \---com
+    |       \---comonier
+    |           \---netheritesilkspawners
+    |                   Main.class
+    |                   
+    +---generated-sources
+    |   \---annotations
+    +---generated-test-sources
+    |   \---test-annotations
+    \---test-classes

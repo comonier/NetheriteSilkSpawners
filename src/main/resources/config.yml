@@ -1,0 +1,58 @@
+# NetheriteSilkSpawners - Configuration (Updated for 1.21.1)
+
+# Plugin language (Options: pt, en)
+language: "pt"
+
+# --- Collect/Break Settings ---
+
+# List of valid pickaxe materials allowed to mine spawners.
+# Our plugin defaults to NETHERITE_PICKAXE. 
+# To enable others, remove the '#' from the line.
+allowed-pickaxes:
+  - "NETHERITE_PICKAXE"
+#  - "DIAMOND_PICKAXE"
+#  - "GOLDEN_PICKAXE"
+#  - "IRON_PICKAXE"
+#  - "STONE_PICKAXE"
+#  - "WOODEN_PICKAXE"
+#  - "COPPER_PICKAXE" # Added for 1.21.1 compatibility (Custom/Future-proofing)
+
+# If true, requires the specific permission 'nss.tool.<material>' to use that tool.
+# Example: nss.tool.diamond_pickaxe
+# If false, any player with a tool from the list above can mine.
+require-tool-permission: false
+
+# If true, requires Silk Touch (Toque de Seda) enchantment on the pickaxe.
+require-silk-touch: true
+
+# If true, requires 'nss.collect.all' or 'nss.collect.<mob_type>' to drop the item.
+require-collect-permission: true
+
+# --- Place Settings ---
+
+# If true, requires 'nss.place.all' or 'nss.place.<mob_type>' to place a spawner.
+require-place-permission: true
+
+# --- Change Settings (Using Spawn Eggs) ---
+
+# Allow players to change spawner type by right-clicking with a Spawn Egg.
+allow-egg-change: true
+
+# If true, requires 'nss.change.all' or 'nss.change.<mob_type>' to change it.
+require-change-permission: true
+
+# --- Protection & Anti-Grief ---
+
+# Prevents spawners from being destroyed/dropped by explosions (TNT, Creeper, etc).
+prevent-explosion-drop: true
+
+# --- Notifications & Audit ---
+
+# Discord Webhook URL for remote logs.
+# Create a Webhook in your Discord Channel and paste the URL below.
+# Leave it as "SUA_URL_AQUI" to disable.
+discord-webhook-url: "SUA_URL_AQUI"
+
+# Chat Global Announcement.
+# If true, announces to all players in the chat when someone interacts with a spawner.
+announce-globally: true

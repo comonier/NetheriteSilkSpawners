@@ -1,0 +1,22 @@
+prefix: "&8[&dNSS&8] "
+collect-success: "&aYou collected a &e%type% &aspawner!"
+place-success: "&aYou placed a &e%type% &aspawner!"
+change-success: "&aSpawner type changed to &e%type%&a!"
+no-permission: "&cYou don't have permission for this action."
+no-permission-region: "&cYou cannot interact with spawners in protected territory."
+reload-success: "&aConfigurations and messages reloaded successfully!"
+invalid-syntax: "&cUse: /nss reload"
+
+# Smart Status
+deny-header: "&e&lAction Blocked:"
+deny-tool: "&bTool (%tool%): %status%"
+deny-perm: "&bPermission (%type%): %status%"
+deny-silk: "&bEnchantment Silk: %status%"
+status-on: "&aOn"
+status-off: "&cOff"
+
+# Global Announcements
+announce-collect: "&d%player% &7collected a &e%type% &7spawner!"
+announce-place: "&d%player% &7placed a &e%type% &7spawner!"
+announce-change: "&d%player% &7changed a spawner type to &e%type%&7!"
+announce-explosion: "&cA spawner of %type% was destroyed by an explosion!"
