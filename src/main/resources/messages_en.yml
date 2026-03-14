@@ -12,6 +12,7 @@ deny-header: "&e&lAction Blocked:"
 deny-tool: "&bTool (%tool%): %status%"
 deny-perm: "&bPermission (%type%): %status%"
 deny-silk: "&bEnchantment Silk: %status%"
+inventory-full: "&cYour inventory is full! Free up a slot to collect the spawner."
 status-on: "&aOn"
 status-off: "&cOff"
 

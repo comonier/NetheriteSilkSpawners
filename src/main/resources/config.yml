@@ -17,6 +17,10 @@ allowed-pickaxes:
 #  - "WOODEN_PICKAXE"
 #  - "COPPER_PICKAXE" # Added for 1.21.1 compatibility (Custom/Future-proofing)
 
+# If true, the spawner goes directly to the player's inventory.
+# If false, it drops on the ground normally.
+auto-inventory: true
+
 # If true, requires the specific permission 'nss.tool.<material>' to use that tool.
 # Example: nss.tool.diamond_pickaxe
 # If false, any player with a tool from the list above can mine.

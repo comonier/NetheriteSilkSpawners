@@ -12,6 +12,7 @@ deny-header: "&e&lAção Bloqueada:"
 deny-tool: "&bFerramenta (%tool%): %status%"
 deny-perm: "&bPermissão (%type%): %status%"
 deny-silk: "&bEncantamento Silk: %status%"
+inventory-full: "&cSeu inventário está cheio! Esvazie um espaço para coletar o spawner."
 status-on: "&aOn"
 status-off: "&cOff"
 
@@ -20,3 +21,5 @@ announce-collect: "&d%player% &7coletou um spawner de &e%type%&7!"
 announce-place: "&d%player% &7colocou um spawner de &e%type%&7!"
 announce-change: "&d%player% &7alterou um spawner para &e%type%&7!"
 announce-explosion: "&cUm spawner de &e%type% &cfoi destruído por uma explosão!"
+
+
