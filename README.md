@@ -1,4 +1,4 @@
-# 💎 NetheriteSilkSpawners v1.1
+# 💎 NetheriteSilkSpawners v1.2
 
 Advanced Spawner Management for Minecraft 1.21.1 with Smart Status Checks, Discord Integration, and Anti-Loss Inventory Protection.
 
