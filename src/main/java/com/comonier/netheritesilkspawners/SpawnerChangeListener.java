@@ -76,11 +76,12 @@ public class SpawnerChangeListener implements Listener {
                 }
             }
         } else {
-            // Block the action and notify the player via Smart Status
+            // Block the action and notify the player via Smart Status using raw status
+            String off = plugin.getRawMsg("status-off");
             player.sendMessage(plugin.getMsg("deny-header"));
             player.sendMessage(plugin.getMsg("deny-perm")
                     .replace("%type%", typeName)
-                    .replace("%status%", plugin.getMsg("status-off")));
+                    .replace("%status%", off));
             
             event.setCancelled(true);
         }

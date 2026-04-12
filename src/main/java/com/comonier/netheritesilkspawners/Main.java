@@ -13,6 +13,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -39,11 +40,19 @@ public class Main extends JavaPlugin implements CommandExecutor, TabCompleter {
     private FileConfiguration messages;
     private DiscordWebhook discord;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    
+    /**
+     * NamespacedKey used to tag legitimate spawners via PersistentDataContainer.
+     */
+    public static NamespacedKey SPAWNER_KEY;
 
     @Override
     public void onEnable() {
+        // Initialize the NBT key
+        SPAWNER_KEY = new NamespacedKey(this, "legitimate_spawner");
+
         saveDefaultConfig();
-        // Templates
+        // Saving language templates
         saveResource("messages_pt.yml", false);
         saveResource("messages_en.yml", false);
         saveResource("messages_es.yml", false);
@@ -55,7 +64,7 @@ public class Main extends JavaPlugin implements CommandExecutor, TabCompleter {
         File logFolder = new File(getDataFolder(), "logs");
         if (!logFolder.exists()) logFolder.mkdirs();
 
-        // Registering all events together in the main folder
+        // Registering all armored listeners
         getServer().getPluginManager().registerEvents(new SpawnerBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new SpawnerChangeListener(this), this);
         getServer().getPluginManager().registerEvents(new SpawnerPlaceListener(this), this);
@@ -77,15 +86,32 @@ public class Main extends JavaPlugin implements CommandExecutor, TabCompleter {
         messages = YamlConfiguration.loadConfiguration(langFile);
     }
 
+    /**
+     * Gets a formatted message with the prefix.
+     */
     public String getMsg(String path) {
         String prefix = messages.getString("prefix", "");
         String msg = messages.getString(path, "Message not found: " + path);
         return ChatColor.translateAlternateColorCodes('&', prefix + msg);
     }
 
+    /**
+     * Gets a formatted message WITHOUT the prefix.
+     * Prevents double prefixing in Smart Status updates.
+     */
+    public String getRawMsg(String path) {
+        String msg = messages.getString(path, path);
+        return ChatColor.translateAlternateColorCodes('&', msg);
+    }
+
+    /**
+     * Advanced protection check for WorldGuard, GriefPrevention, and RedProtect.
+     * Validates if a player is authorized to build/break in a specific location.
+     */
     public boolean canBuildHere(Player player, Block block) {
         if (player.hasPermission("nss.admin")) return true;
 
+        // WorldGuard Integration
         if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
             LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
@@ -95,6 +121,7 @@ public class Main extends JavaPlugin implements CommandExecutor, TabCompleter {
             }
         }
 
+        // GriefPrevention Integration
         if (Bukkit.getPluginManager().isPluginEnabled("GriefPrevention")) {
             Claim claim = GriefPrevention.instance.dataStore.getClaimAt(block.getLocation(), false, null);
             if (claim != null && claim.allowBuild(player, Material.SPAWNER) != null) {
@@ -102,6 +129,7 @@ public class Main extends JavaPlugin implements CommandExecutor, TabCompleter {
             }
         }
 
+        // RedProtect Integration (v8.x)
         if (Bukkit.getPluginManager().isPluginEnabled("RedProtect")) {
             Region region = RedProtect.get().getAPI().getRegion(block.getLocation());
             if (region != null && !region.canBuild(player)) {
@@ -112,6 +140,9 @@ public class Main extends JavaPlugin implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    /**
+     * Handles global actions, broadcasts, and Discord Webhook logging.
+     */
     public void handleAction(Player player, String actionType, String type) {
         String playerName = (player != null) ? player.getName() : "Natural/Grief";
         String spawnerName = (type != null) ? type.replace("_", " ").toLowerCase() : "unknown";

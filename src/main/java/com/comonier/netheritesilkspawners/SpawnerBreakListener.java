@@ -11,10 +11,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.persistence.PersistentDataType;
 import java.util.List;
 
 /**
- * Handles spawner mining with strict tool, permission, and territory checks.
+ * Handles spawner mining and ensures the legitimate tag follows the item.
  */
 public class SpawnerBreakListener implements Listener {
     private final Main plugin;
@@ -30,7 +31,6 @@ public class SpawnerBreakListener implements Listener {
 
         Player player = event.getPlayer();
         
-        // 1. Territory Protection Check (WorldGuard, GP, RedProtect)
         if (!plugin.canBuildHere(player, block)) {
             player.sendMessage(plugin.getMsg("no-permission-region"));
             event.setCancelled(true);
@@ -43,23 +43,18 @@ public class SpawnerBreakListener implements Listener {
             List<String> allowedTools = plugin.getConfig().getStringList("allowed-pickaxes");
             String toolUsed = itemHand.getType().name();
 
-            // Requirement Validations
             boolean hasTool = allowedTools.contains(toolUsed);
             boolean hasToolPerm = !plugin.getConfig().getBoolean("require-tool-permission") || player.hasPermission("nss.tool." + toolUsed.toLowerCase());
             boolean hasSilk = !plugin.getConfig().getBoolean("require-silk-touch") || itemHand.containsEnchantment(Enchantment.SILK_TOUCH);
             boolean hasCollectPerm = !plugin.getConfig().getBoolean("require-collect-permission") || (player.hasPermission("nss.collect.all") || player.hasPermission("nss.collect." + type));
 
-            // Logic to prevent external plugins from dropping the spawner illegally
             if (hasTool && hasToolPerm && hasSilk && hasCollectPerm) {
-                
-                // Inventory Check (Anti-Loss Protection)
                 if (plugin.getConfig().getBoolean("auto-inventory")) {
                     if (player.getInventory().firstEmpty() == -1) {
                         player.sendMessage(plugin.getMsg("inventory-full"));
                         event.setCancelled(true);
                         return;
                     }
-                    
                     event.setExpToDrop(0);
                     event.setDropItems(false);
                     giveSpawnerDirectly(player, spawner);
@@ -71,7 +66,6 @@ public class SpawnerBreakListener implements Listener {
                     plugin.handleAction(player, "COLLECT", type);
                 }
             } else {
-                // Hard-cancel the event if any requirement is missing to block bypasses (like Slimefun)
                 sendSmartDeny(player, type, toolUsed, hasTool && hasToolPerm, hasSilk, hasCollectPerm);
                 event.setCancelled(true);
             }
@@ -94,6 +88,10 @@ public class SpawnerBreakListener implements Listener {
         if (meta != null) {
             CreatureSpawner state = (CreatureSpawner) meta.getBlockState();
             state.setSpawnedType(spawner.getSpawnedType());
+            
+            // Critical: Pass the legitimacy tag from the block to the item PDC
+            state.getPersistentDataContainer().set(Main.SPAWNER_KEY, PersistentDataType.BYTE, (byte) 1);
+            
             meta.setBlockState(state);
             item.setItemMeta(meta);
         }
@@ -101,9 +99,11 @@ public class SpawnerBreakListener implements Listener {
     }
 
     private void sendSmartDeny(Player player, String type, String tool, boolean toolOk, boolean silkOk, boolean permOk) {
+        String on = plugin.getRawMsg("status-on");
+        String off = plugin.getRawMsg("status-off");
         player.sendMessage(plugin.getMsg("deny-header"));
-        player.sendMessage(plugin.getMsg("deny-tool").replace("%tool%", tool.replace("_", " ")).replace("%status%", toolOk ? plugin.getMsg("status-on") : plugin.getMsg("status-off")));
-        player.sendMessage(plugin.getMsg("deny-perm").replace("%type%", type).replace("%status%", permOk ? plugin.getMsg("status-on") : plugin.getMsg("status-off")));
-        player.sendMessage(plugin.getMsg("deny-silk").replace("%status%", silkOk ? plugin.getMsg("status-on") : plugin.getMsg("status-off")));
+        player.sendMessage(plugin.getMsg("deny-tool").replace("%tool%", tool.replace("_", " ")).replace("%status%", toolOk ? on : off));
+        player.sendMessage(plugin.getMsg("deny-perm").replace("%type%", type).replace("%status%", permOk ? on : off));
+        player.sendMessage(plugin.getMsg("deny-silk").replace("%status%", silkOk ? on : off));
     }
 }

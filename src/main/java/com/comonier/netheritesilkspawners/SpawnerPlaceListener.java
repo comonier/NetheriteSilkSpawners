@@ -11,10 +11,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 /**
- * Handles spawner placement with strict permission checks 
- * and protection against NullPointerExceptions (NBT Safety).
+ * Handles spawner placement, NBT safety, and legitimacy tagging.
  */
 public class SpawnerPlaceListener implements Listener {
     private final Main plugin;
@@ -30,7 +30,6 @@ public class SpawnerPlaceListener implements Listener {
 
         Player player = event.getPlayer();
 
-        // 1. Territory Protection Check (WorldGuard, GP, RedProtect)
         if (!plugin.canBuildHere(player, block)) {
             player.sendMessage(plugin.getMsg("no-permission-region"));
             event.setCancelled(true);
@@ -40,36 +39,29 @@ public class SpawnerPlaceListener implements Listener {
         ItemStack item = event.getItemInHand();
         if (item.getItemMeta() instanceof BlockStateMeta meta && meta.getBlockState() instanceof CreatureSpawner spawnerMeta) {
             
-            // NBT Safety: Check if SpawnedType exists, default to PIG if null
             EntityType entityType = spawnerMeta.getSpawnedType();
             String type = (entityType != null) ? entityType.name().toLowerCase() : "pig";
 
-            // 2. Specific Permission Check
             boolean hasPlacePerm = !plugin.getConfig().getBoolean("require-place-permission") 
                     || (player.hasPermission("nss.place.all") || player.hasPermission("nss.place." + type));
 
             if (hasPlacePerm) {
                 if (block.getState() instanceof CreatureSpawner spawner) {
-                    // Force the spawner block to have the mob type from the item NBT
+                    // Force mob type
                     spawner.setSpawnedType(entityType != null ? entityType : EntityType.PIG);
+                    
+                    // Tag the block as legitimate using PDC
+                    spawner.getPersistentDataContainer().set(Main.SPAWNER_KEY, PersistentDataType.BYTE, (byte) 1);
+                    
                     spawner.update();
                     plugin.handleAction(player, "PLACE", type);
                 }
             } else {
-                // Block placement and send Smart Deny status
+                String off = plugin.getRawMsg("status-off");
                 player.sendMessage(plugin.getMsg("deny-header"));
                 player.sendMessage(plugin.getMsg("deny-perm")
                         .replace("%type%", type)
-                        .replace("%status%", plugin.getMsg("status-off")));
-                event.setCancelled(true);
-            }
-        } else {
-            // Handle generic spawner items (no metadata)
-            boolean hasGenericPerm = !plugin.getConfig().getBoolean("require-place-permission") 
-                    || player.hasPermission("nss.place.all");
-            
-            if (!hasGenericPerm) {
-                player.sendMessage(plugin.getMsg("no-permission"));
+                        .replace("%status%", off));
                 event.setCancelled(true);
             }
         }
