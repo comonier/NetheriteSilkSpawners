@@ -1,0 +1,27 @@
+prefix: "&8[&dNSS&8] "
+collect-success: "&aВы собрали спавнер &e%type%&a!"
+place-success: "&aВы установили спавнер &e%type%&a!"
+change-success: "&aТип спавнера изменен на &e%type%&a!"
+no-permission: "&cУ вас нет прав на это действие."
+no-permission-region: "&cВы не можете взаимодействовать со спавнерами на защищенной территории."
+reload-success: "&aКонфигурация и сообщения успешно перезагружены!"
+invalid-syntax: "&cИспользуйте: /nss reload"
+
+# Smart Status
+deny-header: "&e&lДействие заблокировано:"
+deny-tool: "&bИнструмент (%tool%): %status%"
+deny-perm: "&bРазрешение (%type%): %status%"
+deny-silk: "&bШелковое касание: %status%"
+inventory-full: "&cВаш инвентарь полон! Освободите место, чтобы забрать спавнер."
+status-on: "&aВкл"
+status-off: "&cВыкл"
+
+# Protection Messages
+deny-anvil: "&cПереименование или изменение спавнеров в наковальне запрещено!"
+deny-external-change: "&cЭтот спавнер защищен и не может быть изменен внешними источниками."
+
+# Global Announcements
+announce-collect: "&d%player% &7собрал спавнер &e%type%&7!"
+announce-place: "&d%player% &7установил спавнер &e%type%&7!"
+announce-change: "&d%player% &7изменил тип спавнера на &e%type%&7!"
+announce-explosion: "&cСпавнер &e%type% &cбыл уничтожен взрывом!"

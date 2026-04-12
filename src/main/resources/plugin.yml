@@ -1,10 +1,10 @@
 name: NetheriteSilkSpawners
-version: 1.2
+version: '${project.version}'
 main: com.comonier.netheritesilkspawners.Main
 api-version: '1.21'
 author: comonier
-description: Advanced spawner management (1.21.1) with protection bypass.
-softdepend: [WorldGuard, GriefPrevention]
+description: Advanced spawner management (1.19 - 1.21.1) with multi-protection support.
+softdepend: [WorldGuard, GriefPrevention, RedProtect]
 commands:
   nss:
     description: Main command for NetheriteSilkSpawners

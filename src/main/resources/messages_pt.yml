@@ -7,7 +7,7 @@ no-permission-region: "&cVocê não pode mexer em spawners em terrenos protegido
 reload-success: "&aConfigurações e mensagens recarregadas com sucesso!"
 invalid-syntax: "&cUtilize: /nss reload"
 
-# Status Inteligente
+# Smart Status
 deny-header: "&e&lAção Bloqueada:"
 deny-tool: "&bFerramenta (%tool%): %status%"
 deny-perm: "&bPermissão (%type%): %status%"
@@ -16,10 +16,12 @@ inventory-full: "&cSeu inventário está cheio! Esvazie um espaço para coletar 
 status-on: "&aOn"
 status-off: "&cOff"
 
+# Protection Messages
+deny-anvil: "&cNão é permitido renomear ou modificar spawners na bigorna!"
+deny-external-change: "&cEste spawner está protegido e não pode ser alterado por fontes externas."
+
 # Anúncios Globais
 announce-collect: "&d%player% &7coletou um spawner de &e%type%&7!"
 announce-place: "&d%player% &7colocou um spawner de &e%type%&7!"
 announce-change: "&d%player% &7alterou um spawner para &e%type%&7!"
 announce-explosion: "&cUm spawner de &e%type% &cfoi destruído por uma explosão!"
-
-

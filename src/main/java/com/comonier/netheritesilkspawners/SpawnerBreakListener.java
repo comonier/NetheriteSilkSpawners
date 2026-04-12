@@ -13,9 +13,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import java.util.List;
 
+/**
+ * Handles spawner mining with strict tool, permission, and territory checks.
+ */
 public class SpawnerBreakListener implements Listener {
     private final Main plugin;
-    public SpawnerBreakListener(Main plugin) { this.plugin = plugin; }
+
+    public SpawnerBreakListener(Main plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSpawnerBreak(BlockBreakEvent event) {
@@ -24,52 +30,48 @@ public class SpawnerBreakListener implements Listener {
 
         Player player = event.getPlayer();
         
-        // 1. Verificação de Região (WorldGuard/GP)
-        if (plugin.canBuildHere(player, block) == false) {
+        // 1. Territory Protection Check (WorldGuard, GP, RedProtect)
+        if (!plugin.canBuildHere(player, block)) {
             player.sendMessage(plugin.getMsg("no-permission-region"));
             event.setCancelled(true);
             return;
         }
 
         if (block.getState() instanceof CreatureSpawner spawner) {
-            String type = spawner.getSpawnedType().name().toLowerCase();
+            String type = spawner.getSpawnedType() != null ? spawner.getSpawnedType().name().toLowerCase() : "pig";
             ItemStack itemHand = player.getInventory().getItemInMainHand();
             List<String> allowedTools = plugin.getConfig().getStringList("allowed-pickaxes");
             String toolUsed = itemHand.getType().name();
 
-            // Verificações de Requisitos (Smart Status)
+            // Requirement Validations
             boolean hasTool = allowedTools.contains(toolUsed);
             boolean hasToolPerm = !plugin.getConfig().getBoolean("require-tool-permission") || player.hasPermission("nss.tool." + toolUsed.toLowerCase());
             boolean hasSilk = !plugin.getConfig().getBoolean("require-silk-touch") || itemHand.containsEnchantment(Enchantment.SILK_TOUCH);
             boolean hasCollectPerm = !plugin.getConfig().getBoolean("require-collect-permission") || (player.hasPermission("nss.collect.all") || player.hasPermission("nss.collect." + type));
 
-            // Se todos os requisitos de permissão/ferramenta baterem...
+            // Logic to prevent external plugins from dropping the spawner illegally
             if (hasTool && hasToolPerm && hasSilk && hasCollectPerm) {
                 
-                // VERIFICAÇÃO OBRIGATÓRIA DE INVENTÁRIO (Se auto-inventory estiver ON)
-                if (plugin.getConfig().getBoolean("auto-inventory") == true) {
+                // Inventory Check (Anti-Loss Protection)
+                if (plugin.getConfig().getBoolean("auto-inventory")) {
                     if (player.getInventory().firstEmpty() == -1) {
-                        // Inventário cheio: Cancela a quebra, não dropa nada e avisa o jogador.
                         player.sendMessage(plugin.getMsg("inventory-full"));
                         event.setCancelled(true);
                         return;
                     }
                     
-                    // Se houver espaço, processa a quebra e entrega direta
                     event.setExpToDrop(0);
                     event.setDropItems(false);
                     giveSpawnerDirectly(player, spawner);
                     plugin.handleAction(player, "COLLECT", type);
                 } else {
-                    // Se auto-inventory estiver OFF, dropa no chão normalmente
                     event.setExpToDrop(0);
                     event.setDropItems(false);
                     dropSpawnerOnGround(block, spawner);
                     plugin.handleAction(player, "COLLECT", type);
                 }
-                
             } else {
-                // Se faltar algo (Ferramenta, Perm ou Silk), mostra o Status Smart
+                // Hard-cancel the event if any requirement is missing to block bypasses (like Slimefun)
                 sendSmartDeny(player, type, toolUsed, hasTool && hasToolPerm, hasSilk, hasCollectPerm);
                 event.setCancelled(true);
             }

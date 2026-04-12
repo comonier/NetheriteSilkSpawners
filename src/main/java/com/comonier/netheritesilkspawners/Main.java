@@ -1,12 +1,15 @@
 package com.comonier.netheritesilkspawners;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -40,16 +43,26 @@ public class Main extends JavaPlugin implements CommandExecutor, TabCompleter {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        // Templates
         saveResource("messages_pt.yml", false);
         saveResource("messages_en.yml", false);
+        saveResource("messages_es.yml", false);
+        saveResource("messages_ru.yml", false);
+        
         loadMessages();
         this.discord = new DiscordWebhook(this);
+        
         File logFolder = new File(getDataFolder(), "logs");
-        if (logFolder.exists() == false) logFolder.mkdirs();
+        if (!logFolder.exists()) logFolder.mkdirs();
+
+        // Registering all events together in the main folder
         getServer().getPluginManager().registerEvents(new SpawnerBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new SpawnerChangeListener(this), this);
         getServer().getPluginManager().registerEvents(new SpawnerPlaceListener(this), this);
         getServer().getPluginManager().registerEvents(new ExplosionListener(this), this);
+        getServer().getPluginManager().registerEvents(new SpawnerSecurityListener(this), this);
+        getServer().getPluginManager().registerEvents(new SpawnerGlobalBlocker(this), this);
+
         if (getCommand("nss") != null) {
             getCommand("nss").setExecutor(this);
             getCommand("nss").setTabCompleter(this);
@@ -58,9 +71,9 @@ public class Main extends JavaPlugin implements CommandExecutor, TabCompleter {
 
     public void loadMessages() {
         reloadConfig();
-        String lang = getConfig().getString("language", "pt");
+        String lang = getConfig().getString("language", "en");
         File langFile = new File(getDataFolder(), "messages_" + lang + ".yml");
-        if (langFile.exists() == false) langFile = new File(getDataFolder(), "messages_en.yml");
+        if (!langFile.exists()) langFile = new File(getDataFolder(), "messages_en.yml");
         messages = YamlConfiguration.loadConfiguration(langFile);
     }
 
@@ -72,29 +85,48 @@ public class Main extends JavaPlugin implements CommandExecutor, TabCompleter {
 
     public boolean canBuildHere(Player player, Block block) {
         if (player.hasPermission("nss.admin")) return true;
+
         if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
+            LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();
-            if (query.testBuild(BukkitAdapter.adapt(block.getLocation()), WorldGuardPlugin.inst().wrapPlayer(player)) == false) return false;
+            if (!query.testBuild(BukkitAdapter.adapt(block.getLocation()), localPlayer)) {
+                return false;
+            }
         }
+
         if (Bukkit.getPluginManager().isPluginEnabled("GriefPrevention")) {
             Claim claim = GriefPrevention.instance.dataStore.getClaimAt(block.getLocation(), false, null);
-            if (claim != null && claim.allowBuild(player, Material.SPAWNER) != null) return false;
+            if (claim != null && claim.allowBuild(player, Material.SPAWNER) != null) {
+                return false;
+            }
         }
+
+        if (Bukkit.getPluginManager().isPluginEnabled("RedProtect")) {
+            Region region = RedProtect.get().getAPI().getRegion(block.getLocation());
+            if (region != null && !region.canBuild(player)) {
+                return false;
+            }
+        }
+
         return true;
     }
 
     public void handleAction(Player player, String actionType, String type) {
-        String playerName = (player != null) ? player.getName() : "Natural/Explosion";
-        String spawnerName = type.replace("_", " ").toLowerCase();
-        if (player != null) logAction(player, actionType, type);
+        String playerName = (player != null) ? player.getName() : "Natural/Grief";
+        String spawnerName = (type != null) ? type.replace("_", " ").toLowerCase() : "unknown";
+
+        if (player != null) logAction(player, actionType, spawnerName);
+
         if (getConfig().getBoolean("announce-globally")) {
             String msgKey = "announce-" + actionType.toLowerCase();
             String annMsg = getMsg(msgKey).replace("%player%", playerName).replace("%type%", spawnerName);
             Bukkit.broadcastMessage(annMsg);
         }
+
         String discordMsg = "**[NSS]** Action: `" + actionType + "` | Target: `" + spawnerName + "` | Origin: `" + playerName + "`";
         discord.sendAsync(discordMsg);
+
         if (player != null) {
             String feedbackKey = actionType.toLowerCase() + "-success";
             player.sendMessage(getMsg(feedbackKey).replace("%type%", spawnerName));
@@ -104,21 +136,27 @@ public class Main extends JavaPlugin implements CommandExecutor, TabCompleter {
     public void logAction(Player player, String action, String spawnerType) {
         String time = LocalDateTime.now().format(formatter);
         String entry = "[" + time + "] Action: " + action + " | Type: " + spawnerType;
+        
         File userLog = new File(getDataFolder() + "/logs", player.getUniqueId() + ".txt");
-        try (PrintWriter out = new PrintWriter(new FileWriter(userLog, true))) { out.println(entry); } catch (IOException ignored) {}
+        try (PrintWriter out = new PrintWriter(new FileWriter(userLog, true))) {
+            out.println(entry);
+        } catch (IOException ignored) {}
+
         File globalLogFile = new File(getDataFolder(), "logs.yml");
         FileConfiguration globalLog = YamlConfiguration.loadConfiguration(globalLogFile);
         String path = "logs." + System.currentTimeMillis();
         globalLog.set(path + ".player", player.getName());
         globalLog.set(path + ".action", action);
         globalLog.set(path + ".type", spawnerType);
-        try { globalLog.save(globalLogFile); } catch (IOException ignored) {}
+        try {
+            globalLog.save(globalLogFile);
+        } catch (IOException ignored) {}
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-            if (sender.hasPermission("nss.admin") == false) {
+            if (!sender.hasPermission("nss.admin")) {
                 sender.sendMessage(getMsg("no-permission"));
                 return true;
             }

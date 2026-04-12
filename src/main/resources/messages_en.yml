@@ -16,6 +16,10 @@ inventory-full: "&cYour inventory is full! Free up a slot to collect the spawner
 status-on: "&aOn"
 status-off: "&cOff"
 
+# Protection Messages
+deny-anvil: "&cRenaming or modifying spawners in an anvil is not allowed!"
+deny-external-change: "&cThis spawner is protected and cannot be modified by external sources."
+
 # Global Announcements
 announce-collect: "&d%player% &7collected a &e%type% &7spawner!"
 announce-place: "&d%player% &7placed a &e%type% &7spawner!"

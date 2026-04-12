@@ -6,6 +6,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Handles asynchronous communication with Discord Webhooks for remote logging.
+ */
 public class DiscordWebhook {
 
     private final Main plugin;
@@ -14,10 +17,19 @@ public class DiscordWebhook {
         this.plugin = plugin;
     }
 
+    /**
+     * Sends a message to the configured Discord Webhook URL asynchronously.
+     * @param content The plain text or JSON content to send.
+     */
     public void sendAsync(String content) {
         String webhookUrl = plugin.getConfig().getString("discord-webhook-url");
-        if (webhookUrl == null || webhookUrl.isEmpty() || webhookUrl.equals("SUA_URL_AQUI")) return;
+        
+        // Validation: Check if the URL is empty or remains as the default placeholder
+        if (webhookUrl == null || webhookUrl.isEmpty() || webhookUrl.equals("YOUR_URL_HERE")) {
+            return;
+        }
 
+        // Running asynchronously to prevent server lag/tps drop
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 URL url = new URL(webhookUrl);
@@ -27,6 +39,7 @@ public class DiscordWebhook {
                 connection.setRequestProperty("User-Agent", "NSS-Webhook");
                 connection.setDoOutput(true);
 
+                // Basic JSON structure for Discord Webhook
                 String json = "{\"content\": \"" + content + "\"}";
 
                 try (OutputStream os = connection.getOutputStream()) {
@@ -34,9 +47,12 @@ public class DiscordWebhook {
                     os.write(input, 0, input.length);
                 }
 
+                // Necessary to trigger the request
                 connection.getResponseCode();
                 connection.disconnect();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+                // Silently ignore connection errors to avoid console spam
+            }
         });
     }
 }

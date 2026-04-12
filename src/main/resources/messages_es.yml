@@ -1,0 +1,27 @@
+prefix: "&8[&dNSS&8] "
+collect-success: "&a¡Has recolectado un generador de &e%type%&a!"
+place-success: "&a¡Has colocado un generador de &e%type%&a!"
+change-success: "&a¡Tipo de generador cambiado a &e%type%&a!"
+no-permission: "&cNo tienes permiso para esta acción."
+no-permission-region: "&cNo puedes interactuar con generadores en terrenos protegidos."
+reload-success: "&a¡Configuraciones y mensajes recargados con éxito!"
+invalid-syntax: "&cUsa: /nss reload"
+
+# Smart Status
+deny-header: "&e&lAcción Bloqueada:"
+deny-tool: "&bHerramienta (%tool%): %status%"
+deny-perm: "&bPermiso (%type%): %status%"
+deny-silk: "&bEncantamiento Toque de Seda: %status%"
+inventory-full: "&c¡Tu inventario está lleno! Libera un espacio para recolectar el generador."
+status-on: "&aOn"
+status-off: "&cOff"
+
+# Protection Messages
+deny-anvil: "&c¡No está permitido renombrar o modificar generadores en el yunque!"
+deny-external-change: "&cEste generador está protegido y no puede ser alterado por fuentes externas."
+
+# Global Announcements
+announce-collect: "&d%player% &7recolectó un generador de &e%type%&7!"
+announce-place: "&d%player% &7colocó un generador de &e%type%&7!"
+announce-change: "&d%player% &7cambió un generador a &e%type%&7!"
+announce-explosion: "&c¡Un generador de &e%type% &cfue destruido por una explosión!"

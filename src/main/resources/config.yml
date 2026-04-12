@@ -1,35 +1,31 @@
-# NetheriteSilkSpawners - Configuration (Updated for 1.21.1)
+# NetheriteSilkSpawners - Configuration
 
-# Plugin language (Options: pt, en)
-language: "pt"
+# Defines the plugin language. Options: pt, en, es, ru.
+# The plugin will load the corresponding messages_XX.yml file.
+language: "en"
 
 # --- Collect/Break Settings ---
 
-# List of valid pickaxe materials allowed to mine spawners.
-# Our plugin defaults to NETHERITE_PICKAXE. 
-# To enable others, remove the '#' from the line.
+# List of pickaxes allowed to mine spawners.
+# You can add DIAMOND_PICKAXE, IRON_PICKAXE, COPPER_PICKAXE, etc.
+# If the tool used is not on this list, the spawner will not be collected.
 allowed-pickaxes:
   - "NETHERITE_PICKAXE"
-#  - "DIAMOND_PICKAXE"
-#  - "GOLDEN_PICKAXE"
-#  - "IRON_PICKAXE"
-#  - "STONE_PICKAXE"
-#  - "WOODEN_PICKAXE"
-#  - "COPPER_PICKAXE" # Added for 1.21.1 compatibility (Custom/Future-proofing)
 
 # If true, the spawner goes directly to the player's inventory.
 # If false, it drops on the ground normally.
 auto-inventory: true
 
-# If true, requires the specific permission 'nss.tool.<material>' to use that tool.
-# Example: nss.tool.diamond_pickaxe
-# If false, any player with a tool from the list above can mine.
-require-tool-permission: false
+# If true, requires the specific permission 'nss.tool.<material>' to use the tool.
+# Example: nss.tool.netherite_pickaxe. If false, anyone with a tool from the list above can mine.
+# Recommended: true for strict control via VIP groups/ranks.
+require-tool-permission: true
 
-# If true, requires Silk Touch (Toque de Seda) enchantment on the pickaxe.
+# If true, strictly requires the Silk Touch enchantment on the pickaxe.
 require-silk-touch: true
 
 # If true, requires 'nss.collect.all' or 'nss.collect.<mob_type>' to drop the item.
+# This allows you to limit which mob spawners each player group can collect.
 require-collect-permission: true
 
 # --- Place Settings ---
@@ -39,24 +35,23 @@ require-place-permission: true
 
 # --- Change Settings (Using Spawn Eggs) ---
 
-# Allow players to change spawner type by right-clicking with a Spawn Egg.
+# Allows or blocks changing the spawner type by right-clicking with a Spawn Egg.
 allow-egg-change: true
 
-# If true, requires 'nss.change.all' or 'nss.change.<mob_type>' to change it.
+# If true, requires 'nss.change.all' or 'nss.change.<mob_type>' to change the spawner.
 require-change-permission: true
 
 # --- Protection & Anti-Grief ---
 
-# Prevents spawners from being destroyed/dropped by explosions (TNT, Creeper, etc).
+# If true, prevents spawners from being destroyed or dropped by explosions (TNT, Creeper, etc).
+# Recommended: true to prevent duplication exploits or griefing.
 prevent-explosion-drop: true
 
 # --- Notifications & Audit ---
 
-# Discord Webhook URL for remote logs.
-# Create a Webhook in your Discord Channel and paste the URL below.
-# Leave it as "SUA_URL_AQUI" to disable.
-discord-webhook-url: "SUA_URL_AQUI"
+# Discord Webhook URL for remote logs. 
+# Leave it as "YOUR_URL_HERE" to disable.
+discord-webhook-url: "YOUR_URL_HERE"
 
-# Chat Global Announcement.
 # If true, announces to all players in the chat when someone interacts with a spawner.
 announce-globally: true
